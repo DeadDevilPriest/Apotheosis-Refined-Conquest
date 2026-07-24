@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "apotheosis_refined_conquest:legendary_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:legendary_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:legendary_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:legendary_material"
+    },
+    {
+      "tag": "forge:tools/swords"
+    }
+  ],
+  "result": {
+    "item": "apotheosis_refined_conquest:weapon_cache_legendary"
+  }
+}

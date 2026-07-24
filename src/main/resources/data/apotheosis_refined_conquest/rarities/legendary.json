@@ -1,0 +1,57 @@
+{
+  "ordinal": 8,
+  "color": "#FFC61A",
+  "material": "apotheosis_refined_conquest:legendary_material",
+  "weight": 35,
+  "quality": 12.8,
+  "rules": [
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "ability",
+      "chance": 1.0
+    },
+    {
+      "type": "ability",
+      "chance": 0.46
+    },
+    {
+      "type": "socket",
+      "chance": 0.9
+    },
+    {
+      "type": "socket",
+      "chance": 0.77
+    },
+    {
+      "type": "socket",
+      "chance": 0.64
+    },
+    {
+      "type": "socket",
+      "chance": 0.51
+    },
+    {
+      "type": "durability",
+      "chance": 0.29
+    }
+  ]
+}

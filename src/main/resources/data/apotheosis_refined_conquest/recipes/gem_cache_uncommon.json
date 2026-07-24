@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "apotheosis:gem_dust"
+    }
+  ],
+  "result": {
+    "item": "apotheosis_refined_conquest:gem_cache_uncommon"
+  }
+}

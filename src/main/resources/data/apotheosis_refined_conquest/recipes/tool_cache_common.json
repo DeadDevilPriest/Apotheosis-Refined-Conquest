@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "apotheosis:common_material"
+    },
+    {
+      "item": "apotheosis:common_material"
+    },
+    {
+      "item": "apotheosis:common_material"
+    },
+    {
+      "item": "apotheosis:common_material"
+    },
+    {
+      "tag": "forge:tools/pickaxes"
+    }
+  ],
+  "result": {
+    "item": "apotheosis_refined_conquest:tool_cache_common"
+  }
+}

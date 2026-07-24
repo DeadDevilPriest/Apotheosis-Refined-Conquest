@@ -1,0 +1,17 @@
+{
+  "ordinal": 0,
+  "color": "#6B5D4F",
+  "material": "apotheosis_refined_conquest:worn_material",
+  "weight": 3000,
+  "quality": 0.0,
+  "rules": [
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "durability",
+      "chance": 0.05
+    }
+  ]
+}

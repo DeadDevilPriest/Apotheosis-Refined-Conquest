@@ -1,0 +1,17 @@
+{
+  "ordinal": 1,
+  "color": "#808080",
+  "material": "apotheosis:common_material",
+  "weight": 2800,
+  "quality": 0,
+  "rules": [
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "stat",
+      "chance": 0.25
+    }
+  ]
+}

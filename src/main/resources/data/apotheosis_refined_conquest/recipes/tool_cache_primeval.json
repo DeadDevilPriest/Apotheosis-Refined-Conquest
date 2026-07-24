@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "apotheosis_refined_conquest:primeval_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:primeval_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:primeval_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:primeval_material"
+    },
+    {
+      "tag": "forge:tools/pickaxes"
+    }
+  ],
+  "result": {
+    "item": "apotheosis_refined_conquest:tool_cache_primeval"
+  }
+}

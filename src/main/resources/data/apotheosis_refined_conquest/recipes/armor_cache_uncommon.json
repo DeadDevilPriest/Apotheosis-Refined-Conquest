@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "apotheosis:uncommon_material"
+    },
+    {
+      "item": "minecraft:iron_chestplate"
+    }
+  ],
+  "result": {
+    "item": "apotheosis_refined_conquest:armor_cache_uncommon"
+  }
+}

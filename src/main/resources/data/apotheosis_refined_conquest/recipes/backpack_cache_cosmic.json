@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "apotheosis_refined_conquest:cosmic_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:cosmic_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:cosmic_material"
+    },
+    {
+      "item": "apotheosis_refined_conquest:cosmic_material"
+    },
+    {
+      "item": "sophisticatedbackpacks:backpack"
+    }
+  ],
+  "result": {
+    "item": "apotheosis_refined_conquest:backpack_cache_cosmic"
+  }
+}

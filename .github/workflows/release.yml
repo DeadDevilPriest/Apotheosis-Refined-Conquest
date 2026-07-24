@@ -1,0 +1,140 @@
+name: Build & Release
+
+# Runs when you publish a GitHub Release. Create a release with a version tag
+# (e.g. v0.2.0) and this builds the mod at that version and attaches the jar to
+# the release. The version comes from the tag, so you never edit a version by
+# hand — tag v0.2.0 and the jar is 0.2.0.
+#
+# workflow_dispatch lets you press "Run workflow" in the Actions tab to test
+# that it still compiles, without making a release. That run only builds; it
+# does not upload anything.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+# Needed so the build can attach the jar to the release.
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      # On a release, take the version from the tag (drop a leading "v").
+      # On a manual run there is no tag, so we build the default version from
+      # gradle.properties and skip the upload.
+      - name: Resolve version
+        id: ver
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            V="${{ github.event.release.tag_name }}"
+            V="${V#v}"
+            echo "version=$V"     >> "$GITHUB_OUTPUT"
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version="        >> "$GITHUB_OUTPUT"
+            echo "is_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build
+        shell: bash
+        run: |
+          chmod +x ./gradlew
+          if [ -n "${{ steps.ver.outputs.version }}" ]; then
+            ./gradlew build --no-daemon -Pmod_version="${{ steps.ver.outputs.version }}"
+          else
+            ./gradlew build --no-daemon
+          fi
+
+      # Attaches the built jar to the release. When you later create a CurseForge
+      # project, uncomment the two curseforge lines below and add the token
+      # secret — this same step will then also upload there. See SETUP below.
+      - name: Publish
+        if: steps.ver.outputs.is_release == 'true'
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: build/libs/*.jar
+
+          # --- CurseForge: aktivieren, sobald das Projekt existiert -----------
+          # 1. Projekt-ID von der CurseForge-Projektseite (rechts, "Project ID").
+          # 2. API-Token erstellen: https://console.curseforge.com/  ->  API Tokens
+          # 3. Token als GitHub-Secret CURSEFORGE_TOKEN hinterlegen
+          #    (Repo -> Settings -> Secrets and variables -> Actions).
+          # 4. Die beiden Zeilen einkommentieren und die ID eintragen.
+          # curseforge-id: 000000
+          # curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          # --------------------------------------------------------------------
+          #
+          # Loader (forge), Spielversion (1.20.1) und Abhängigkeiten (apotheosis,
+          # placebo, geckolib, ...) liest mc-publish selbst aus der mods.toml der
+          # Jar — die müssen hier nicht wiederholt werden.
+
+  # Rewrites update.json from the full list of releases and commits it to the
+  # dedicated `release` branch — the branch Forge's update checker reads — so it
+  # always reflects the newest release without you editing anything. Kept off
+  # main on purpose. Separate job so it can never break the jar build above.
+  update-manifest:
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_BRANCH: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The release branch may not exist on the first run — create it from the
+      # released commit if the remote doesn't have it yet.
+      - name: Switch to release branch
+        shell: bash
+        run: |
+          git fetch origin "$RELEASE_BRANCH" || true
+          if git show-ref --verify --quiet "refs/remotes/origin/$RELEASE_BRANCH"; then
+            git checkout -B "$RELEASE_BRANCH" "origin/$RELEASE_BRANCH"
+          else
+            git checkout -B "$RELEASE_BRANCH"
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Regenerate update.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          MC=$(grep -E '^minecraft_version=' gradle.properties | cut -d= -f2)
+          gh api --paginate "/repos/${{ github.repository }}/releases" > releases.json
+          python .github/scripts/gen_update_json.py releases.json update.json "$MC"
+          rm -f releases.json
+
+      - name: Commit and push if changed
+        shell: bash
+        run: |
+          if ! git diff --quiet -- update.json; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add update.json
+            git commit -m "Update update.json for ${{ github.event.release.tag_name }}"
+            git push -u origin "$RELEASE_BRANCH"
+          fi

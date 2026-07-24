@@ -1,0 +1,29 @@
+{
+  "ordinal": 3,
+  "color": "#00E5B0",
+  "material": "apotheosis_refined_conquest:improved_material",
+  "weight": 1200,
+  "quality": 4.8,
+  "rules": [
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "stat",
+      "chance": 1.0
+    },
+    {
+      "type": "ability",
+      "chance": 1.0
+    },
+    {
+      "type": "socket",
+      "chance": 0.9
+    },
+    {
+      "type": "durability",
+      "chance": 0.14
+    }
+  ]
+}
