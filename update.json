@@ -1,0 +1,10 @@
+{
+  "homepage": "https://github.com/DeadDevilPriest/Apotheosis-Refined-Conquest",
+  "1.20.1": {
+    "0.1.0": "Erste Veroeffentlichung von Apotheosis Refined Conquest. Enthaelt Affix-Fusion, seltenheitssichere Upgrades, animierte Loot-Kisten und Gem-Crafting (auf Basis von Apotheosis)."
+  },
+  "promos": {
+    "1.20.1-latest": "0.1.0",
+    "1.20.1-recommended": "0.1.0"
+  }
+}
