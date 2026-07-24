@@ -82,10 +82,16 @@ jobs:
           # placebo, geckolib, ...) liest mc-publish selbst aus der mods.toml der
           # Jar — die müssen hier nicht wiederholt werden.
 
-  # Rewrites update.json from the full list of releases and commits it to the
-  # dedicated `release` branch — the branch Forge's update checker reads — so it
-  # always reflects the newest release without you editing anything. Kept off
-  # main on purpose. Separate job so it can never break the jar build above.
+  # Rewrites update.json from the full list of releases and publishes it to the
+  # dedicated `release` branch — the branch Forge's update checker reads.
+  #
+  # Everything is generated from the RELEASE TAG's checkout, which has
+  # gradle.properties and the generator script. The release branch itself may
+  # hold neither, so switching the working tree onto it (the old approach)
+  # failed with "gradle.properties: No such file or directory". The release
+  # branch is instead force-set to this tag's tree plus the refreshed
+  # update.json, making it a clean snapshot of each released version. Separate
+  # job — it can never block the jar build.
   update-manifest:
     if: github.event_name == 'release'
     needs: build
@@ -95,22 +101,10 @@ jobs:
     env:
       RELEASE_BRANCH: release
     steps:
-      - name: Checkout
+      - name: Checkout release tag
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      # The release branch may not exist on the first run — create it from the
-      # released commit if the remote doesn't have it yet.
-      - name: Switch to release branch
-        shell: bash
-        run: |
-          git fetch origin "$RELEASE_BRANCH" || true
-          if git show-ref --verify --quiet "refs/remotes/origin/$RELEASE_BRANCH"; then
-            git checkout -B "$RELEASE_BRANCH" "origin/$RELEASE_BRANCH"
-          else
-            git checkout -B "$RELEASE_BRANCH"
-          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -128,13 +122,17 @@ jobs:
           python .github/scripts/gen_update_json.py releases.json update.json "$MC"
           rm -f releases.json
 
-      - name: Commit and push if changed
+      - name: Publish update.json to release branch
         shell: bash
         run: |
-          if ! git diff --quiet -- update.json; then
-            git config user.name  "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add update.json
-            git commit -m "Update update.json for ${{ github.event.release.tag_name }}"
-            git push -u origin "$RELEASE_BRANCH"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$RELEASE_BRANCH"
+          git add update.json
+          if git diff --cached --quiet; then
+            echo "update.json unchanged — nothing to publish."
+            exit 0
           fi
+          git commit -m "Update update.json for ${{ github.event.release.tag_name }}"
+          git push -f origin "$RELEASE_BRANCH"
+
